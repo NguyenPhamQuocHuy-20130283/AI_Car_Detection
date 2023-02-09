@@ -1,26 +1,30 @@
-import cv2
-cascade_src_cars = 'cars.xml'
-video_src = './VidSample\sample_01(Color).mp4'
-cap = cv2.VideoCapture(video_src)
+# -*- coding: utf-8 -*-
 
-car_cascade = cv2.CascadeClassifier(cascade_src_cars)
+import cv2
+
+
+cascade_src = 'cars.xml'
+
+video_src = './dataset_video2.avi'
+
+cap = cv2.VideoCapture(video_src)
+fgbg = cv2.createBackgroundSubtractorMOG2()
+car_cascade = cv2.CascadeClassifier(cascade_src)
 
 
 while True:
     ret, img = cap.read()
-
+    fgbg.apply(img)
     if (type(img) == type(None)):
         break
+
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    red = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    cars = car_cascade.detectMultiScale(gray, 1.4, 1)
 
-    # cars = car_cascade.detectMultiScale(gray, 1.1, 2)
-    cars = car_cascade.detectMultiScale(gray, 1.1, 2)
-    # for (x, y, w, h) in cars:
-    #     cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 255), 2)
     for (x, y, w, h) in cars:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 255), 2)
+        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 215), 2)
+
     cv2.imshow('video', img)
 
     if cv2.waitKey(33) == 27:
